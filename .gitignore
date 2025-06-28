@@ -29,3 +29,11 @@ dist-ssr
 .env.production
 # Local Netlify folder
 .netlify
+
+# Archive files
+*.tar.gz
+*.zip
+
+# CLI tools
+gh-cli/
+gh_*.deb
