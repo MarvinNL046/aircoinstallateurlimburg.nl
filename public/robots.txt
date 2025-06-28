@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://aircoinstallateurlimburg.nl/sitemap.xml
+
+# Crawl-delay for bots that respect it
+User-agent: *
+Crawl-delay: 1
