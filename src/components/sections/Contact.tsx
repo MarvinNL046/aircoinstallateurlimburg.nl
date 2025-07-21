@@ -1,13 +1,23 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Phone, Mail, MapPin, Clock, MessageCircle, Star } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { COMPANY_INFO } from '../../utils/constants';
-import { sendEmail, ContactFormData, initEmailJS } from '../../utils/emailjs';
+import { sendEmail, EmailData } from '../../utils/email';
+import { useNavigate } from 'react-router-dom';
+import toast, { Toaster } from 'react-hot-toast';
+
+interface ContactFormData {
+  name: string;
+  phone: string;
+  email: string;
+  location: string;
+  service?: string;
+}
 
 export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitMessage, setSubmitMessage] = useState('');
+  const navigate = useNavigate();
   
   const {
     register,
@@ -16,27 +26,49 @@ export default function Contact() {
     formState: { errors },
   } = useForm<ContactFormData>();
 
-  useEffect(() => {
-    initEmailJS();
-  }, []);
 
   const onSubmit = async (data: ContactFormData) => {
     setIsSubmitting(true);
-    setSubmitMessage('');
     
     try {
-      await sendEmail(data);
-      setSubmitMessage('Bedankt voor uw aanvraag! We nemen binnen 24 uur contact met u op.');
+      const emailData: EmailData = {
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        city: data.location,
+        message: `Aanvraag via contactformulier`,
+        service: data.service
+      };
+      
+      await sendEmail(emailData);
+      
+      // Track analytics if available
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('event', 'form_submit', {
+          form_name: 'contact_form',
+          form_location: 'contact_section',
+          service_type: data.service || 'general'
+        });
+      }
+      
+      toast.success('Bedankt voor uw aanvraag! We nemen binnen 24 uur contact met u op.');
       reset();
+      
+      // Redirect to thank you page
+      setTimeout(() => {
+        navigate('/tot-snel');
+      }, 2000);
     } catch (error) {
-      setSubmitMessage('Er ging iets mis. Bel ons gerust op ' + COMPANY_INFO.phone);
+      toast.error('Er ging iets mis. Bel ons gerust op ' + COMPANY_INFO.phone);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <section id="contact" className="py-20 bg-gray-50">
+    <>
+      <Toaster position="top-center" />
+      <section id="contact" className="py-20 bg-gray-50">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -253,23 +285,11 @@ export default function Contact() {
                 </div>
               </div>
 
-              {submitMessage && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className={`mt-6 p-4 rounded-lg text-center font-semibold ${
-                    submitMessage.includes('Bedankt') 
-                      ? 'bg-green-100 text-green-800' 
-                      : 'bg-red-100 text-red-800'
-                  }`}
-                >
-                  {submitMessage}
-                </motion.div>
-              )}
             </form>
           </motion.div>
         </div>
       </div>
     </section>
+    </>
   );
 }

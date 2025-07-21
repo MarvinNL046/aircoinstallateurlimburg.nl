@@ -3,46 +3,77 @@ import { motion } from 'framer-motion';
 import { Star, CheckCircle, ArrowRight, Phone } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { HERO_HEADLINES, COMPANY_INFO } from '../../utils/constants';
-import { sendEmail, ContactFormData, initEmailJS } from '../../utils/emailjs';
+import { sendEmail, EmailData } from '../../utils/email';
+import { useNavigate } from 'react-router-dom';
+import toast, { Toaster } from 'react-hot-toast';
+
+interface HeroFormData {
+  name: string;
+  phone: string;
+  email: string;
+  location: string;
+}
 
 export default function HeroOptimized() {
   const [currentHeadline, setCurrentHeadline] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitMessage, setSubmitMessage] = useState('');
+  const navigate = useNavigate();
   
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<ContactFormData>();
+  } = useForm<HeroFormData>();
 
   useEffect(() => {
-    initEmailJS();
-    
     const interval = setInterval(() => {
       setCurrentHeadline((prev) => (prev + 1) % HERO_HEADLINES.length);
     }, 4000);
     return () => clearInterval(interval);
   }, []);
 
-  const onSubmit = async (data: ContactFormData) => {
+  const onSubmit = async (data: HeroFormData) => {
     setIsSubmitting(true);
-    setSubmitMessage('');
     
     try {
-      await sendEmail(data);
-      setSubmitMessage('Bedankt! We nemen binnen 24 uur contact met u op.');
+      const emailData: EmailData = {
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        city: data.location,
+        message: 'Aanvraag voor gratis offerte via website',
+        service: 'installatie'
+      };
+      
+      await sendEmail(emailData);
+      
+      // Track analytics if available
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('event', 'form_submit', {
+          form_name: 'hero_form',
+          form_location: 'hero'
+        });
+      }
+      
+      toast.success('Bedankt! We nemen binnen 24 uur contact met u op.');
       reset();
+      
+      // Optional: redirect to thank you page
+      setTimeout(() => {
+        navigate('/tot-snel');
+      }, 2000);
     } catch (error) {
-      setSubmitMessage('Er ging iets mis. Bel ons op ' + COMPANY_INFO.phone);
+      toast.error('Er ging iets mis. Bel ons op ' + COMPANY_INFO.phone);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <section className="relative min-h-screen flex items-center gradient-background overflow-hidden">
+    <>
+      <Toaster position="top-center" />
+      <section className="relative min-h-screen flex items-center gradient-background overflow-hidden">
       <div className="absolute inset-0 bg-black/20" />
       
       <div className="container mx-auto px-4 py-24 relative z-10">
@@ -203,18 +234,6 @@ export default function HeroOptimized() {
                 >
                   {isSubmitting ? 'Even geduld...' : '🔥 Ja, Ik Wil Een Gratis Offerte!'}
                 </button>
-                
-                {submitMessage && (
-                  <motion.p
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className={`text-center font-semibold ${
-                      submitMessage.includes('Bedankt') ? 'text-green-400' : 'text-red-400'
-                    }`}
-                  >
-                    {submitMessage}
-                  </motion.p>
-                )}
               </div>
               
               <div className="mt-6 text-center">
@@ -232,5 +251,6 @@ export default function HeroOptimized() {
         </div>
       </div>
     </section>
+    </>
   );
 }
