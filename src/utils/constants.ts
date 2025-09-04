@@ -10,6 +10,7 @@ export const COMPANY_INFO = {
   rating: 4.7,
   reviewCount: 163,
   reviewSource: 'Google Reviews',
+  appointmentUrl: 'https://afspraken.staycoolairco.nl/',
 }
 
 export const BUSINESS_HOURS = {

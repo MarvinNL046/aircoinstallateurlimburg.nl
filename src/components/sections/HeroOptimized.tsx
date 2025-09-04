@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Star, CheckCircle, ArrowRight, Phone } from 'lucide-react';
+import { Star, CheckCircle, ArrowRight, Phone, Calendar } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { HERO_HEADLINES, COMPANY_INFO } from '../../utils/constants';
 import { sendEmail, EmailData } from '../../utils/email';
@@ -123,6 +123,15 @@ export default function HeroOptimized() {
               <a href="#contact" className="btn-primary flex items-center justify-center space-x-2">
                 <span>Gratis Offerte</span>
                 <ArrowRight className="w-4 h-4" />
+              </a>
+              <a
+                href={COMPANY_INFO.appointmentUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2"
+              >
+                <Calendar className="w-4 h-4" />
+                <span>Plan Direct Online</span>
               </a>
               <a
                 href={`tel:${COMPANY_INFO.phone.replace(/ /g, '')}`}

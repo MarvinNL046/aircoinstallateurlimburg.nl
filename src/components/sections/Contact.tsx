@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Phone, Mail, MapPin, Clock, MessageCircle, Star } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, MessageCircle, Star, Calendar } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { COMPANY_INFO } from '../../utils/constants';
 import { sendEmail, EmailData } from '../../utils/email';
@@ -159,6 +159,21 @@ export default function Contact() {
                   <p>Vrijdag: 09:00-16:00</p>
                   <p>Weekend: Gesloten</p>
                 </div>
+              </div>
+
+              <div className="mt-6">
+                <a
+                  href={COMPANY_INFO.appointmentUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full bg-green-600 hover:bg-green-700 text-white px-6 py-4 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2"
+                >
+                  <Calendar className="w-5 h-5" />
+                  <span>Plan Direct Een Afspraak Online</span>
+                </a>
+                <p className="text-sm text-gray-600 text-center mt-2">
+                  Kies zelf een datum en tijd die u uitkomt
+                </p>
               </div>
             </div>
           </motion.div>
