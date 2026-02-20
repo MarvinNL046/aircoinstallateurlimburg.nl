@@ -13,8 +13,6 @@ const CTABanner = lazy(() => import('./components/sections/CTABanner'))
 const Products = lazy(() => import('./components/sections/Products'))
 const FAQ = lazy(() => import('./components/sections/FAQ'))
 const TotSnel = lazy(() => import('./pages/TotSnel'))
-const ContactWebhookTest = lazy(() => import('./pages/ContactWebhookTest'))
-
 function HomePage() {
   return (
     <>
@@ -51,13 +49,6 @@ function App() {
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
           </div>}>
             <TotSnel />
-          </Suspense>
-        } />
-        <Route path="/contact-webhook-test" element={
-          <Suspense fallback={<div className="h-screen flex items-center justify-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
-          </div>}>
-            <ContactWebhookTest />
           </Suspense>
         } />
       </Routes>

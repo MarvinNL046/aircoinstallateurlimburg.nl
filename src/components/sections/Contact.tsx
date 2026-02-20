@@ -56,8 +56,8 @@ export default function Contact() {
       
       // Redirect to thank you page
       setTimeout(() => {
-        navigate('/tot-snel');
-      }, 2000);
+        window.location.href = 'https://staycoolairco.nl/tot-snel';
+      }, 1500);
     } catch (error) {
       toast.error('Er ging iets mis. Bel ons gerust op ' + COMPANY_INFO.phone);
     } finally {
